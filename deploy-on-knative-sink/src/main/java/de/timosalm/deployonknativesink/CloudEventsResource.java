@@ -55,11 +55,18 @@ public class CloudEventsResource {
     private void deployOnKnative(CloudEventPayload payload) {
         var service = knativeClient.inNamespace(payload.getNamespace())
                 .services().withName(payload.getName()).get();
-        if (service != null && containerImagesMatch(payload.getLatestImage(), service)) {
-            log.info("No update for service " + payload.getName() + "Container image up tp date");
-        } else {
+        if (service == null) {
+            log.info("Start creation of service " + payload.getName());
             var newService = createService(payload);
-            knativeClient.services().inNamespace(payload.getNamespace()).createOrReplace(newService);
+            knativeClient.services().inNamespace(payload.getNamespace()).create(newService);
+            log.info("Finished creation of service " + payload.getName());
+        } else if (containerImagesMatch(payload.getLatestImage(), service)) {
+            log.info("No update for service " + payload.getName() + ". Container image up to date");
+        } else {
+            log.info("Start image update of service " + payload.getName());
+            var updatedService = updateService(payload, service);
+            knativeClient.services().inNamespace(payload.getNamespace()).createOrReplace(updatedService);
+            log.info("Finished image update of service " + payload.getName());
         }
     }
 
@@ -71,6 +78,18 @@ public class CloudEventsResource {
                 .endMetadata()
                 .withNewSpec()
                 .withNewTemplate()
+                .withNewSpec()
+                .addToContainers(new ContainerBuilder().withImage(payload.getLatestImage()).build())
+                .endSpec()
+                .endTemplate()
+                .endSpec()
+                .build();
+    }
+
+    private Service updateService(CloudEventPayload payload, Service service) {
+        return new ServiceBuilder(service)
+                .editOrNewSpec()
+                .editOrNewTemplate()
                 .withNewSpec()
                 .addToContainers(new ContainerBuilder().withImage(payload.getLatestImage()).build())
                 .endSpec()
