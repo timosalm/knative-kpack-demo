@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+ name: events-sa
+ namespace: knative-kpack-demo
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+ name: event-watcher
+ namespace: knative-kpack-demo
+rules:
+ - apiGroups:
+     - "kpack.io"
+   resources:
+     - images
+   verbs:
+     - get
+     - list
+     - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+ name: k8s-ra-event-watcher
+ namespace: knative-kpack-demo
+roleRef:
+ apiGroup: rbac.authorization.k8s.io
+ kind: Role
+ name: event-watcher
+subjects:
+ - kind: ServiceAccount
+   name: events-sa
+   namespace: knative-kpack-demo
+---
+apiVersion: sources.knative.dev/v1
+kind: ApiServerSource
+metadata:
+ name: kpack-image-events
+ namespace: knative-kpack-demo
+spec:
+ serviceAccountName: events-sa
+ mode: Resource
+ resources:
+   - apiVersion: kpack.io/v1alpha1
+     kind: Image
+ sink:
+   ref:
+     apiVersion: v1
+     kind: Service
+     name: deploy-on-knative-sink

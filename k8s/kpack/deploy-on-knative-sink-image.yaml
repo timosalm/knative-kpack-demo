@@ -1,0 +1,16 @@
+apiVersion: kpack.io/v1alpha1
+kind: Image
+metadata:
+  name: deploy-on-knative-sink
+  namespace: knative-kpack-demo
+spec:
+  builder:
+    kind: ClusterBuilder
+    name: default
+  serviceAccount: default
+  source:
+    git:
+      revision: main
+      url: https://github.com/tsalm-pivotal/knative-kpack-demo.git
+    subPath: deploy-on-knative-sink
+  tag: REGISTRY-URL/MY-PROJECT/deploy-on-knative-sink

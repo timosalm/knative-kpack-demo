@@ -1,0 +1,15 @@
+apiVersion: kpack.io/v1alpha1
+kind: Image
+metadata:
+  name: spring-boot-hello-world
+  namespace: knative-kpack-demo
+spec:
+  builder:
+    kind: ClusterBuilder
+    name: default
+  serviceAccount: default
+  source:
+    git:
+      revision: main
+      url: https://github.com/tsalm-pivotal/spring-boot-hello-world.git
+  tag: REGISTRY-URL/MY-PROJECT/spring-boot-hello-world

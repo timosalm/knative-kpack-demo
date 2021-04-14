@@ -1,0 +1,42 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+ name: deploy-on-knative-sink-sa
+ namespace: knative-kpack-demo
+imagePullSecrets:
+- name: registry-secret
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+ name: new-kn-services-creator
+ namespace: knative-kpack-demo
+rules:
+ - apiGroups:
+     - "serving.knative.dev"
+   resources:
+     - services
+   verbs:
+     - get
+     - list
+     - watch
+     - create
+     - update
+     - patch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+ name: deploy-on-knative-sink-rb
+ namespace: knative-kpack-demo
+roleRef:
+ apiGroup: rbac.authorization.k8s.io
+ kind: Role
+ name: new-kn-services-creator
+subjects:
+ - kind: ServiceAccount
+   name: deploy-on-knative-sink-sa
+   namespace: knative-kpack-demo
