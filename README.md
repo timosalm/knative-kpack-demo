@@ -40,7 +40,7 @@ kubectl apply -f k8s/api-server-source.yaml
 	   ```
    - For **kpack** customize the sample in [k8s/kpack/deploy-on-knative-sink-image.yaml](k8s/kpack/deploy-on-knative-sink-image.yaml) and see more information [here](https://github.com/pivotal/kpack/blob/master/docs/image.md)
 
-   Wait until the image is avialable:
+   Wait until the image is available:
    ```
    watch kp build list deploy-on-knative-sink -n knative-kpack-demo
    ```
