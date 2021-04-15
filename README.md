@@ -36,7 +36,7 @@ kubectl apply -f k8s/api-server-source.yaml
 2. Apply the kpack/TBS container image definition
    - Using the VMware Tanzu Build Service **kp cli** and a Harbor registry:
 	   ```
-	   kp image create deploy-on-knative-sink --tag REGISTRY-URL/MY-PROJECT/deploy-on-knative-sink --git https://github.com/tsalm-pivotal/knative-kpack-demo.git --git-revision main --sub-path deploy-on-knative-sink -n knative-kpack-demo
+	   kp image create deploy-on-knative-sink --tag REGISTRY-URL/MY-PROJECT/deploy-on-knative-sink --git https://github.com/tsalm-pivotal/knative-kpack-demo.git --git-revision v1.0 --sub-path deploy-on-knative-sink -n knative-kpack-demo
 	   ```
    - For **kpack** customize the sample in [k8s/kpack/deploy-on-knative-sink-image.yaml](k8s/kpack/deploy-on-knative-sink-image.yaml) and see more information [here](https://github.com/pivotal/kpack/blob/master/docs/image.md)
 
